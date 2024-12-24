@@ -1,5 +1,7 @@
 package com.example.runmate2.Logins
 
+import android.annotation.SuppressLint
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,7 +26,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,14 +55,15 @@ import com.example.runmate2.AuthState
 import com.example.runmate2.AuthViewModel
 import com.example.runmate2.R
 
+
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Login(navController: NavController, viewModel: AuthViewModel) {
     var Email by remember { mutableStateOf("") }
     var Password by remember { mutableStateOf("") }
     val context = LocalContext.current
-
-
+    val state by viewModel.state.observeAsState()
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
 
@@ -161,12 +167,9 @@ fun Login(navController: NavController, viewModel: AuthViewModel) {
                     keyboardActions = KeyboardActions(
                         onDone = {
                             viewModel.login(Email, Password)
-                            Toast.makeText(context, "Logged in successfully", Toast.LENGTH_SHORT).show()
-                            if (viewModel.state.value is AuthState.Authenticated) {
-                                navController.navigate("Home")
-                            }
-                            else{
-                                Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
+                            focusRequester2.freeFocus()
+                            if (state == AuthState.Authenticated){
+                                Toast.makeText(context, "Logged in Successfully", Toast.LENGTH_SHORT).show()
                             }
                         }
                     )
@@ -184,13 +187,6 @@ fun Login(navController: NavController, viewModel: AuthViewModel) {
                 Button(
                     onClick = {
                         viewModel.login(Email, Password)
-                        Toast.makeText(context, "Logged in successfully", Toast.LENGTH_SHORT).show()
-                        if (viewModel.state.value is AuthState.Authenticated) {
-                            navController.navigate("Home")
-                        }
-                        else{
-                            Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
-                        }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.AppLime)),
                     modifier = Modifier
@@ -260,6 +256,23 @@ fun Login(navController: NavController, viewModel: AuthViewModel) {
                         navController.navigate("SignUp")
                     }
             )
+        }
+    }
+    LaunchedEffect(state) {
+        Log.d("Authstate", "$state")
+        when(state){
+            is AuthState.Authenticated -> {
+                navController.navigate("Home"){
+                    popUpTo("auth")
+                }
+            }
+            is AuthState.Loading -> {
+                Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
+            }
+            is AuthState.Error -> {
+                Toast.makeText(context, (state as AuthState.Error).message, Toast.LENGTH_SHORT).show()
+            }
+            else -> {}
         }
     }
 }

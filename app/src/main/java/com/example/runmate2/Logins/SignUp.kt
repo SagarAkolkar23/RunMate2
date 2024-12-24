@@ -1,6 +1,7 @@
 package com.example.runmate2.Logins
 
 
+import android.util.Log
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -31,6 +32,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -65,6 +67,23 @@ fun SignUp(navController: NavController, viewModel: AuthViewModel){
     var Password by remember { mutableStateOf(" ") }
     var ConfPassword by remember { mutableStateOf(" ") }
     var UserName by remember { mutableStateOf(" ") }
+    val state by viewModel.state.observeAsState()
+    val context  = LocalContext.current
+
+    LaunchedEffect(state){
+        when(state){
+            is  AuthState.Authenticated -> {
+                navController.popBackStack()
+                navController.navigate("Login")
+            }
+            is AuthState.Error -> {
+                Toast.makeText(context, (state as AuthState.Error).message, Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+
+            }
+        }
+    }
 
 
     val focusRequester1 = remember { FocusRequester() }
@@ -72,7 +91,6 @@ fun SignUp(navController: NavController, viewModel: AuthViewModel){
     val focusRequester3 = remember { FocusRequester() }
     val focusRequester4 = remember { FocusRequester() }
 
-    val context = LocalContext.current
     Column(modifier = Modifier
         .fillMaxSize()
         .background(
@@ -229,30 +247,18 @@ fun SignUp(navController: NavController, viewModel: AuthViewModel){
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(
                     onDone = { viewModel.SignUp(Email, ConfPassword)
-                        if(viewModel.state.value is AuthState.Authenticated){
-                            navController.navigate("Login")
-                        }
-                        else if(viewModel.state.value is AuthState.Loading){
-                            Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
-                        }
-                        else{
-                            val msg = (viewModel.state.value as AuthState.Error).message
-                            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                        Log.d("Authstate", "$state")
+                        if(state == AuthState.Authenticated){
+                            Toast.makeText(context, "Signed up successfully", Toast.LENGTH_SHORT).show()
                         }
                     }
                 ))
             Spacer(Modifier.padding(10.dp))
             Button(onClick = {
                 viewModel.SignUp(Email, ConfPassword)
-                if(viewModel.state.value is AuthState.Authenticated){
-                    navController.navigate("Login")
-                }
-                else if(viewModel.state.value is AuthState.Loading){
-                    Toast.makeText(context, "Loading", Toast.LENGTH_SHORT).show()
-                }
-                else{
-                    val msg = (viewModel.state.value as AuthState.Error).message
-                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                Log.d("Authstate", "$state")
+                if(state == AuthState.Authenticated){
+                    Toast.makeText(context, "Signed up successfully", Toast.LENGTH_SHORT).show()
                 }
             },
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.AppLime)),

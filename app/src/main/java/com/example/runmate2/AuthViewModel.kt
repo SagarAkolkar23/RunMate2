@@ -1,17 +1,27 @@
 package com.example.runmate2
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 class AuthViewModel : ViewModel() {
     private val auth : FirebaseAuth = FirebaseAuth.getInstance()
     private val _state : MutableStateFlow<AuthState> =MutableStateFlow(AuthState.Unauthenticated)
-    val state : MutableStateFlow<AuthState> = _state
-
+    val state : MutableLiveData<AuthState> = MutableLiveData()
 
     init{
-            checkAuthStatus()
+        observeAuthState()
+        checkAuthStatus()
+    }
+    private fun observeAuthState() {
+        viewModelScope.launch {
+            _state.collect { authState ->
+                state.postValue(authState)
+            }
+        }
     }
 
     fun checkAuthStatus(){
@@ -28,7 +38,7 @@ class AuthViewModel : ViewModel() {
             _state.value = AuthState.Error("Email and password cannot be empty")
             return
         }
-        //_state.value = AuthState.Loading
+        _state.value = AuthState.Loading
         auth.signInWithEmailAndPassword(Email, Password)
             .addOnCompleteListener{
                 task ->
