@@ -11,8 +11,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,12 +61,14 @@ fun Home(navController: NavController, viewModel: AuthViewModel){
         }
     }
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+        horizontalAlignment = Alignment.CenterHorizontally)
+    {
         Text("RunMate",
             fontSize = 36.sp,
             color = Color.White)
@@ -69,7 +77,7 @@ fun Home(navController: NavController, viewModel: AuthViewModel){
             fontSize = 24.sp,
             color = Color.White)
         Spacer(modifier = Modifier.height(103.dp))
-        Button(onClick = {  },
+        Button(onClick = { navController.navigate("Congrats") },
             modifier = Modifier
                 .clip(CircleShape)
                 .size(250.dp)
@@ -94,18 +102,10 @@ fun Home(navController: NavController, viewModel: AuthViewModel){
                     fontSize = 48.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
-                    )
+                )
             }
         }
-
-        Button(onClick = {
-            viewModel.SignOut()
-            Log.d("Authstate", "${viewModel.state.value}")
-        }) {
-            Text("Sign Out")
-        }
     }
-
 }
 
 @Composable

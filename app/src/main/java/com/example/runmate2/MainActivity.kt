@@ -34,7 +34,8 @@ override fun onCreate(savedInstanceState: Bundle?) {
                         SplashNav(navController)
                         LoginNav(navController)
                         AppNav(navController)
-                    }                }
+                    }
+                }
             }
         }
     }

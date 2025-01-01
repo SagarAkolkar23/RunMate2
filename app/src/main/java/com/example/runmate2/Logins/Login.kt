@@ -262,8 +262,8 @@ fun Login(navController: NavController, viewModel: AuthViewModel) {
         Log.d("Authstate", "$state")
         when(state){
             is AuthState.Authenticated -> {
-                navController.navigate("Home"){
-                    popUpTo("auth")
+                navController.navigate("Home") {
+                    popUpTo(navController.graph.startDestinationId)
                 }
             }
             is AuthState.Loading -> {
