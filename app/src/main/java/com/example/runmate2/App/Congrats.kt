@@ -1,6 +1,8 @@
 package com.example.runmate2.App
 
+import android.annotation.SuppressLint
 import android.app.Application
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +30,12 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,9 +56,25 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.runmate2.Backend.BackView
 import com.example.runmate2.R
+import kotlinx.coroutines.delay
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun Congrats(navController: NavController, view: BackView) {
+
+    val distance by view.distanceLiveData.observeAsState(0.0)
+    val speed by view.speedLiveData.observeAsState(0.0)
+    var timeInSeconds by remember { mutableStateOf(0) }
+    LaunchedEffect(view.isRunning) {
+        while (view.isRunning){
+            delay(1000)
+            timeInSeconds++
+        }
+    }
+    val minutes = (timeInSeconds % 3600) / 60
+    val seconds = timeInSeconds % 60
+    val formattedTime = String.format("%02d:%02d", minutes, seconds)
+    Log.d("timer", formattedTime)
     Column(
         modifier = Modifier
             .background(color = Color(0xFF01111D))
@@ -94,9 +118,9 @@ fun Congrats(navController: NavController, view: BackView) {
                         .padding(top = 5.dp, start = 20.dp, end = 20.dp),
                     horizontalArrangement = Arrangement.SpaceBetween)
                 {
-                    Cards("Distance", "${view.totalDistance} km}")
+                    Cards("Distance", "$distance m")
                     Spacer(modifier = Modifier.width(9.dp))
-                    Cards("Speed", "${view.speedLiveData.value}\nkm/h")
+                    Cards("Speed", "$speed\nm/s")
                     Spacer(modifier = Modifier.width(9.dp))
                     Cards("Steps", "0")
                 }
@@ -110,9 +134,9 @@ fun Congrats(navController: NavController, view: BackView) {
                 {
                     Cards("Calories", "0 KCAL")
                     Spacer(modifier = Modifier.width(9.dp))
-                    Cards("Time", "00:00")
+                    Cards("Time", formattedTime)
                     Spacer(modifier = Modifier.width(9.dp))
-                    Cards("Avg Speed", "0.00\nkm/h")
+                    Cards("Avg Speed", "0.00\nm/s")
                 }
                 Spacer(modifier = Modifier.height(30.dp))
             }
@@ -123,7 +147,9 @@ fun Congrats(navController: NavController, view: BackView) {
                 .fillMaxWidth())
         {
             Row {
-                Button(onClick = { navController.navigate("During") },
+                Button(onClick = { view.stopLocationUpdates()
+                    view.isRunning = false
+                    navController.navigate("During") },
                     colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = colorResource(R.color.AppLime)),
                     modifier = Modifier
                         .size(155.dp)
@@ -135,7 +161,8 @@ fun Congrats(navController: NavController, view: BackView) {
                     )
                 }
                 Spacer(modifier = Modifier.width(30.dp))
-                Button(onClick = {  },
+                Button(onClick = { view.resetStats()
+                                 timeInSeconds = 0},
                     colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = colorResource(R.color.AppLime)),
                     modifier = Modifier
                         .size(155.dp)
@@ -151,10 +178,11 @@ fun Congrats(navController: NavController, view: BackView) {
     }
 }
 
+
+
+
 @Composable
 @Preview
 fun CongratsPreview() {
     Congrats(navController = NavController(context = LocalContext.current), view = BackView(LocalContext.current.applicationContext as Application))
 }
-
-

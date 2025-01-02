@@ -1,6 +1,7 @@
 package com.example.runmate2.App
 
 import android.app.Application
+import android.location.Location
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -43,6 +44,7 @@ import com.example.runmate2.AuthState
 import com.example.runmate2.AuthViewModel
 import com.example.runmate2.Backend.BackView
 import com.example.runmate2.R
+import com.example.runmate2.App.Congrats
 
 @Composable
 fun Home(navController: NavController, viewModel: AuthViewModel, view: BackView){
@@ -79,8 +81,9 @@ fun Home(navController: NavController, viewModel: AuthViewModel, view: BackView)
             fontSize = 24.sp,
             color = Color.White)
         Spacer(modifier = Modifier.height(103.dp))
-        Button(onClick = { navController.navigate("Congrats")
-                         },
+        Button(onClick = {  view.startTracking()
+                            navController.navigate("Congrats")
+        },
             modifier = Modifier
                 .clip(CircleShape)
                 .size(250.dp)

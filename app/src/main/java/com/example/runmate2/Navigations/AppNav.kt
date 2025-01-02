@@ -16,7 +16,7 @@ import com.example.runmate2.Backend.BackView
 fun NavGraphBuilder.AppNav(navController: NavController){
     navigation(startDestination = "Home", route = "app"){
         composable("Home"){
-            Home(navController, viewModel = AuthViewModel())
+            Home(navController, viewModel = AuthViewModel(), view = BackView(LocalContext.current.applicationContext as Application))
         }
         composable("During"){
             During(navController, view = BackView(LocalContext.current.applicationContext as Application))
