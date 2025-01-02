@@ -1,5 +1,6 @@
 package com.example.runmate2.App
 
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -45,10 +46,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.runmate2.Backend.BackView
 import com.example.runmate2.R
 
 @Composable
-fun Congrats(navController: NavController) {
+fun Congrats(navController: NavController, view: BackView) {
     Column(
         modifier = Modifier
             .background(color = Color(0xFF01111D))
@@ -92,9 +94,9 @@ fun Congrats(navController: NavController) {
                         .padding(top = 5.dp, start = 20.dp, end = 20.dp),
                     horizontalArrangement = Arrangement.SpaceBetween)
                 {
-                    Cards("Distance", "0.00 km")
+                    Cards("Distance", "${view.totalDistance} km}")
                     Spacer(modifier = Modifier.width(9.dp))
-                    Cards("Speed", "0.00\nkm/h")
+                    Cards("Speed", "${view.speedLiveData.value}\nkm/h")
                     Spacer(modifier = Modifier.width(9.dp))
                     Cards("Steps", "0")
                 }
@@ -152,7 +154,7 @@ fun Congrats(navController: NavController) {
 @Composable
 @Preview
 fun CongratsPreview() {
-    Congrats(navController = NavController(context = LocalContext.current))
+    Congrats(navController = NavController(context = LocalContext.current), view = BackView(LocalContext.current.applicationContext as Application))
 }
 
 

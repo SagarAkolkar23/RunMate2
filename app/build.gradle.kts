@@ -69,10 +69,14 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
 
     // Jetpack Compose integration (if you're using Compose)
-    implementation("androidx.navigation:navigation-compose:2.5.3")
-    dependencies {
-        implementation(libs.androidx.runtime.livedata)
-        implementation(libs.androidx.lifecycle.runtime.compose)
-    }
+    implementation(libs.androidx.navigation.compose.v253)
+
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+
+    //FusedLocationProvider
+    implementation (libs.play.services.location)
+    implementation (libs.androidx.activity.ktx)
+    implementation (libs.androidx.fragment.ktx)
 
 }
