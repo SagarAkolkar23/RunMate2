@@ -24,11 +24,14 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -42,15 +45,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.runmate2.AuthState
 import com.example.runmate2.AuthViewModel
-import com.example.runmate2.Backend.BackView
 import com.example.runmate2.R
 import com.example.runmate2.App.Congrats
+import com.example.runmate2.Backend.backview
 
 @Composable
-fun Home(navController: NavController, viewModel: AuthViewModel, view: BackView){
+fun Home(navController: NavController, viewModel: AuthViewModel, view : backview){
 
     val state by viewModel.state.observeAsState()
     val context = LocalContext.current
+
+
     LaunchedEffect(state) {
         when(state){
             is AuthState.Unauthenticated -> {
@@ -81,9 +86,8 @@ fun Home(navController: NavController, viewModel: AuthViewModel, view: BackView)
             fontSize = 24.sp,
             color = Color.White)
         Spacer(modifier = Modifier.height(103.dp))
-        Button(onClick = {  view.startTracking()
-                            navController.navigate("Congrats")
-        },
+        Button(onClick = {
+            navController.navigate("Congrats") },
             modifier = Modifier
                 .clip(CircleShape)
                 .size(250.dp)
@@ -118,8 +122,8 @@ fun Home(navController: NavController, viewModel: AuthViewModel, view: BackView)
 fun GradientBrush(isHorizontalGradient: Boolean, colors: List<Color>, angle: Float, modifier: Modifier = Modifier, ) : Brush{
     return Brush.linearGradient(
         colors = colors,
-        start = androidx.compose.ui.geometry.Offset(0f, Float.POSITIVE_INFINITY),
-        end = androidx.compose.ui.geometry.Offset(Float.POSITIVE_INFINITY, 0f)
+        start = Offset(0f, Float.POSITIVE_INFINITY),
+        end = Offset(Float.POSITIVE_INFINITY, 0f)
     )
 }
 
@@ -127,5 +131,5 @@ fun GradientBrush(isHorizontalGradient: Boolean, colors: List<Color>, angle: Flo
 @Preview
 @Composable
 fun HomePreview(){
-    Home(navController = NavController(context = LocalContext.current), viewModel = AuthViewModel(), view = BackView(LocalContext.current.applicationContext as Application))
+    Home(navController = NavController(context = LocalContext.current), viewModel = AuthViewModel(), view = backview())
 }

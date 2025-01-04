@@ -18,7 +18,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.example.runmate2.Backend.BackView
 import com.example.runmate2.Navigations.AppNav
 import com.example.runmate2.Navigations.LoginNav
 import com.example.runmate2.Navigations.Navigations
@@ -28,18 +27,9 @@ import android.Manifest
 import androidx.lifecycle.ViewModelProvider
 
 class MainActivity : ComponentActivity() {
-    private lateinit var backView: BackView
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        backView = ViewModelProvider(this)[BackView::class.java]
-        val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission())
-        { isGranted: Boolean ->
-            if (isGranted) {
-                backView.startTracking()
-            }
-        }
         enableEdgeToEdge()
         setContent {
             RunMate2Theme {
@@ -50,7 +40,6 @@ override fun onCreate(savedInstanceState: Bundle?) {
                         LoginNav(navController)
                         AppNav(navController)
                     }
-                    requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                 }
             }
         }
