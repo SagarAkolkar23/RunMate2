@@ -1,6 +1,7 @@
 package com.example.runmate2.App
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -58,7 +59,7 @@ import com.example.runmate2.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun During(navController: NavController) {
+fun During(navController: NavController, view : backview, time: String) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -135,11 +136,11 @@ fun During(navController: NavController) {
                     )
                 }
                 Spacer(modifier = Modifier.height(25.dp))
-                Cards("Time = ", "00:00")
+                Cards("Time = ", time)
                 Spacer(modifier = Modifier.height(9.dp))
                 Cards("Distance = ", "0 m")
                 Spacer(modifier = Modifier.height(9.dp))
-
+                Log.d("Timer3", view.seconds.toString())
                 Cards("Total Steps = ", "0")
                 Spacer(modifier = Modifier.height(9.dp))
                 Cards("Calories = ", "0 KCAL")
@@ -210,5 +211,5 @@ fun Cards(text : String, data : String){
 @Composable
 @Preview
 fun DuringPreview() {
-    During(navController = NavController(context = LocalContext.current))
+    During(navController = NavController(context = LocalContext.current), view = backview(), "")
 }

@@ -70,23 +70,14 @@ import kotlin.text.format
 
 @SuppressLint("DefaultLocale")
 @Composable
-fun Congrats(navController: NavController, view : backview) : String {
+fun Congrats(navController: NavController, view : backview) {
 
-    var seconds by remember { mutableIntStateOf(0) }
-    var isRunning by remember { mutableStateOf(false) }
-    LaunchedEffect(key1 = true) {
-        isRunning = true
-    }
+    val formattedTime by remember { derivedStateOf { view.formatTime() } }
+    val isRunning by remember { derivedStateOf { view.isRunning } }
+
     LaunchedEffect(isRunning) {
-        if (isRunning) {
-            while (true) {
-                delay(1000)
-                seconds++
-            }
-        }
+        view.startTimer()
     }
-
-
 
     Column(
         modifier = Modifier
@@ -120,7 +111,7 @@ fun Congrats(navController: NavController, view : backview) : String {
             .wrapContentHeight(),
             contentAlignment = Alignment.Center){
             Text(
-                formatTime(seconds),
+                formattedTime,
                 fontSize = 80.sp,
                 color = colorResource(R.color.AppLime),
                 style = TextStyle(
@@ -191,8 +182,9 @@ fun Congrats(navController: NavController, view : backview) : String {
                 .fillMaxWidth())
         {
             Row {
-                Button(onClick = { isRunning = false
-                    navController.navigate("During") },
+                Button(onClick = { view.stopTimer()
+                    view.onStop()
+                    navController.navigate("During/$formattedTime") },
                     colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = colorResource(R.color.AppLime)),
                     modifier = Modifier
                         .size(155.dp)
@@ -205,7 +197,7 @@ fun Congrats(navController: NavController, view : backview) : String {
                     )
                 }
                 Spacer(modifier = Modifier.width(30.dp))
-                Button(onClick = { seconds = 0 },
+                Button(onClick = { view.resetTimer() },
                     colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = colorResource(R.color.AppLime)),
                     modifier = Modifier
                         .size(155.dp)
@@ -220,7 +212,6 @@ fun Congrats(navController: NavController, view : backview) : String {
             }
         }
     }
-    return formatTime(seconds)
 }
 
 
@@ -254,19 +245,13 @@ fun Cards2(text : String, data : String){
     }
 }
 
-@SuppressLint("DefaultLocale")
-fun formatTime(seconds: Int): String {
-    val minutes = seconds / 60
-    val remainingSeconds = seconds % 60
-    return String.format("%02d:%02d", minutes, remainingSeconds)
-}
 
-fun getTime() : String {
-    return formatTime(seconds = 0)
-}
+
+
 
 @Composable
 @Preview
 fun CongratsPreview() {
     Congrats(navController = NavController(context = LocalContext.current), view = backview())
 }
+

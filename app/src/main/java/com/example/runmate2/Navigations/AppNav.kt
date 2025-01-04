@@ -18,8 +18,9 @@ fun NavGraphBuilder.AppNav(navController: NavController){
         composable("Home"){
             Home(navController, viewModel = AuthViewModel(), view = backview())
         }
-        composable("During"){
-            During(navController, )
+        composable("During/{time}"){ backStackEntry ->
+            val time = backStackEntry.arguments?.getString("time")?: "00:00"
+            During(navController, view = backview(), time = time)
         }
         composable("Congrats"){
             Congrats(navController, backview())
