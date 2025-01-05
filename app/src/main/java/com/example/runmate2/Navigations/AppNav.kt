@@ -1,8 +1,5 @@
 package com.example.runmate2.Navigations
 
-import android.app.Application
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -22,11 +19,10 @@ fun NavGraphBuilder.AppNav(navController: NavController){
             val time = backStackEntry.arguments?.getString("time")?: "00:00"
             val steps = backStackEntry.arguments?.getString("steps")?: "0"
             val calories = backStackEntry.arguments?.getString("calories")?: "0 CAL"
-            During(navController, view = backview(), time = time, steps = steps, calories = calories)
+            During(navController, view = backview(), time = time, steps = steps, calories = calories, authViewModel = AuthViewModel())
         }
         composable("Congrats"){
             Congrats(navController, backview())
         }
     }
-
 }

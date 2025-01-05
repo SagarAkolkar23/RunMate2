@@ -42,4 +42,8 @@ class StepsView(application: Application) : AndroidViewModel(application) {
         super.onCleared()
         sensormanager.unregisterListener(stepListener)
     }
+
+     fun resetSteps(){
+        _stepCounter.value = 0
+    }
 }

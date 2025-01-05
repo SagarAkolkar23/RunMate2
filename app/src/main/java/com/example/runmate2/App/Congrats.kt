@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
+import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
@@ -81,8 +82,6 @@ fun Congrats(navController: NavController, view : backview) {
     val context = LocalContext.current
     val viewModel : StepsView = viewModel(factory = stepsViewFact(context.applicationContext as Application))
     val stepCount by viewModel.stepCount.collectAsState()
-    Log.d("Steps", stepCount.toString())
-
     var calories by remember { mutableFloatStateOf(0.0F) }
 
     LaunchedEffect(stepCount) {
@@ -102,41 +101,22 @@ fun Congrats(navController: NavController, view : backview) {
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(top = 54.dp, start = 32.dp)
+                .padding(top = 35.dp, start = 32.dp)
         ) {
-
-            Text("Shinzou Sasageyo",
-                modifier = Modifier
-                    .padding(start = 30.dp),
+            Spacer(modifier = Modifier.height(10.dp))
+            Text("Hello User",
+                modifier = Modifier ,
                 color = Color.White,
-                fontSize = 30.sp,
-                style = TextStyle(
-                    shadow = Shadow(
-                        color = colorResource(R.color.AppLime),
-                        offset = androidx.compose.ui.geometry.Offset(4f, 8f),
-                        blurRadius = 40f
-                    )
-                ))
+                fontSize = 32.sp,)
+            Spacer(modifier = Modifier.height(5.dp))
+            Text("Shinzou Sasageyo",
+                modifier = Modifier,
+                fontSize = 16.sp,
+                color = Color.White)
         }
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-            contentAlignment = Alignment.Center){
-            Text(
-                formattedTime,
-                fontSize = 80.sp,
-                color = colorResource(R.color.AppLime),
-                style = TextStyle(
-                    shadow = Shadow(
-                        color = colorResource(R.color.AppLime),
-                        offset = androidx.compose.ui.geometry.Offset(4f, 8f),
-                        blurRadius = 40f
-                    )
-                )
-            )
-        }
+
 
 
 
@@ -145,8 +125,7 @@ fun Congrats(navController: NavController, view : backview) {
             colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = Color.Black),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp)
-                .padding(start = 10.dp, end = 10.dp)
+                .wrapContentHeight()
                 .shadow(
                     elevation = 80.dp,
                     spotColor = Color.White,
@@ -163,6 +142,43 @@ fun Congrats(navController: NavController, view : backview) {
                     .fillMaxSize()
             ) {
                 Spacer(modifier = Modifier.height(30.dp))
+                Row(horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()){
+                    Text("Tatakae!!",
+                        modifier = Modifier.padding(end = 140.dp))
+                    Button(onClick = { view.resetTimer()
+                        viewModel.resetSteps() },
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = colorResource(R.color.AppLime)),
+                        modifier = Modifier
+                            .width(132.dp)
+                            .height(32.dp)
+                            .padding(end = 30.dp)){
+                        Text(
+                            "Restart",
+                            fontSize = 15.sp,
+                            color = Color.Black,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                }
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                    contentAlignment = Alignment.Center){
+                    Text(
+                        formattedTime,
+                        fontSize = 80.sp,
+                        color = colorResource(R.color.AppLime),
+                        style = TextStyle(
+                            shadow = Shadow(
+                                color = colorResource(R.color.AppLime),
+                                offset = androidx.compose.ui.geometry.Offset(4f, 8f),
+                                blurRadius = 40f
+                            )
+                        )
+                    )
+                }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -186,45 +202,24 @@ fun Congrats(navController: NavController, view : backview) {
                 {
                     Cards2("Calories", "$calories CAL")
                     Spacer(modifier = Modifier.width(9.dp))
+                    Button(onClick = { view.stopTimer()
+                        navController.navigate("During/$formattedTime/$stepCount/$calories") },
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor  = Color(0xFFCCFF00)),
+                        modifier = Modifier
+                            .height(115.dp)){
+                        Text(
+                            "Stop",
+                            fontSize = 31.sp,
+                            color = Color.Black,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(30.dp))
+
             }
         }
-        Spacer(modifier = Modifier.height(40.dp))
-        Box(contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth())
-        {
-            Row {
-                Button(onClick = { view.stopTimer()
-                    navController.navigate("During/$formattedTime/$stepCount/$calories") },
-                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = colorResource(R.color.AppLime)),
-                    modifier = Modifier
-                        .size(155.dp)
-                        .clip(shape = RoundedCornerShape(95.dp))){
-                    Text(
-                        "Stop",
-                        fontSize = 31.sp,
-                        color = Color.Black,
-                        textAlign = TextAlign.Center,
-                    )
-                }
-                val context = LocalContext.current
-                Spacer(modifier = Modifier.width(30.dp))
-                Button(onClick = { view.resetTimer() },
-                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = colorResource(R.color.AppLime)),
-                    modifier = Modifier
-                        .size(155.dp)
-                        .clip(shape = RoundedCornerShape(95.dp))){
-                    Text(
-                        "Restart",
-                        fontSize = 31.sp,
-                        color = Color.Black,
-                        textAlign = TextAlign.Center,
-                    )
-                }
-            }
-        }
+
     }
 }
 
@@ -235,7 +230,7 @@ fun Cards2(text : String, data : String){
         shape = RoundedCornerShape(size = 15.dp),
         colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
         modifier = Modifier
-            .width(95.dp)
+            .width(100.dp)
             .height(115.dp)
             .background(
                 color = Color(0xFF1E1E1E),
@@ -251,7 +246,7 @@ fun Cards2(text : String, data : String){
                 .padding(top = 17.dp))
         Text(data,
             fontSize = 20.sp,
-            color = colorResource(R.color.AppLime),
+            color = Color(0xFFCCFF00),
             fontWeight = FontWeight(600),
             modifier = Modifier
                 .padding(top = 17.dp)
