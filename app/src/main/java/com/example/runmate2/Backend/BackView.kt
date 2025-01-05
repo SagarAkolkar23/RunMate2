@@ -18,15 +18,9 @@ import kotlinx.coroutines.launch
 
 class backview : ViewModel() {
 
-    var TotalTime by mutableIntStateOf(0)
     var seconds by mutableIntStateOf(0)
-        private set
-
     var isRunning by mutableStateOf(false)
-        private set
-
     private var timerJob: Job? = null
-
     fun startTimer() {
         if (timerJob == null || !isRunning) {
             isRunning = true
@@ -41,32 +35,20 @@ class backview : ViewModel() {
             }
         }
     }
-
     fun stopTimer() {
         isRunning = false
         timerJob?.cancel()
         timerJob = null
     }
-
     fun resetTimer() {
         stopTimer()
         seconds = 0
     }
-
-    fun onStop(){
-        seconds = TotalTime
-    }
-
     @SuppressLint("DefaultLocale")
     fun formatTime(): String {
         val minutes = seconds / 60
         val remainingSeconds = seconds % 60
         return String.format("%02d:%02d", minutes, remainingSeconds)
     }
-    @SuppressLint("DefaultLocale")
-    fun formatTime2(): String {
-        val minutes = TotalTime / 60
-        val remainingSeconds = TotalTime % 60
-        return String.format("%02d:%02d", minutes, remainingSeconds)
-    }
+
 }

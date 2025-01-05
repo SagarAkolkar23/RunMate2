@@ -59,7 +59,7 @@ import com.example.runmate2.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun During(navController: NavController, view : backview, time: String) {
+fun During(navController: NavController, view : backview, time: String, steps : String, calories : String) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -141,14 +141,11 @@ fun During(navController: NavController, view : backview, time: String) {
                 Cards("Distance = ", "0 m")
                 Spacer(modifier = Modifier.height(9.dp))
                 Log.d("Timer3", view.seconds.toString())
-                Cards("Total Steps = ", "0")
+                Cards("Total Steps = ", steps)
                 Spacer(modifier = Modifier.height(9.dp))
-                Cards("Calories = ", "0 KCAL")
+                Cards("Calories = ", "$calories CAL")
                 Spacer(modifier = Modifier.height(9.dp))
                 Cards("Top Speed = ", "0 m/s")
-
-
-
             }
         }
     )
@@ -211,5 +208,5 @@ fun Cards(text : String, data : String){
 @Composable
 @Preview
 fun DuringPreview() {
-    During(navController = NavController(context = LocalContext.current), view = backview(), "")
+    During(navController = NavController(context = LocalContext.current), view = backview(), "", "", "")
 }

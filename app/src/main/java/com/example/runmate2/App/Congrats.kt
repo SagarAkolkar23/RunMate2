@@ -3,6 +3,7 @@ package com.example.runmate2.App
 import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -31,9 +32,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,7 +63,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.runmate2.Backend.StepsView
 import com.example.runmate2.Backend.backview
+import com.example.runmate2.Backend.stepsViewFact
 import com.example.runmate2.R
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -73,9 +78,18 @@ import kotlin.text.format
 fun Congrats(navController: NavController, view : backview) {
 
     val formattedTime by remember { derivedStateOf { view.formatTime() } }
-    val isRunning by remember { derivedStateOf { view.isRunning } }
+    val context = LocalContext.current
+    val viewModel : StepsView = viewModel(factory = stepsViewFact(context.applicationContext as Application))
+    val stepCount by viewModel.stepCount.collectAsState()
+    Log.d("Steps", stepCount.toString())
 
-    LaunchedEffect(isRunning) {
+    var calories by remember { mutableFloatStateOf(0.0F) }
+
+    LaunchedEffect(stepCount) {
+        calories = (stepCount * 0.04).toFloat()
+    }
+
+    LaunchedEffect(Unit) {
         view.startTimer()
     }
 
@@ -160,7 +174,7 @@ fun Congrats(navController: NavController, view : backview) {
                     Spacer(modifier = Modifier.width(9.dp))
                     Cards2("Speed", "\nm/s")
                     Spacer(modifier = Modifier.width(9.dp))
-                    Cards2("Steps", "0")
+                    Cards2("Steps", "$stepCount")
                 }
                 Spacer(modifier = Modifier.height(9.dp))
                 Row(
@@ -170,7 +184,7 @@ fun Congrats(navController: NavController, view : backview) {
                         .padding(top = 5.dp, start = 20.dp, end = 20.dp),
                 )
                 {
-                    Cards2("Calories", "0 KCAL")
+                    Cards2("Calories", "$calories CAL")
                     Spacer(modifier = Modifier.width(9.dp))
                 }
                 Spacer(modifier = Modifier.height(30.dp))
@@ -183,8 +197,7 @@ fun Congrats(navController: NavController, view : backview) {
         {
             Row {
                 Button(onClick = { view.stopTimer()
-                    view.onStop()
-                    navController.navigate("During/$formattedTime") },
+                    navController.navigate("During/$formattedTime/$stepCount/$calories") },
                     colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = colorResource(R.color.AppLime)),
                     modifier = Modifier
                         .size(155.dp)
@@ -196,6 +209,7 @@ fun Congrats(navController: NavController, view : backview) {
                         textAlign = TextAlign.Center,
                     )
                 }
+                val context = LocalContext.current
                 Spacer(modifier = Modifier.width(30.dp))
                 Button(onClick = { view.resetTimer() },
                     colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = colorResource(R.color.AppLime)),
