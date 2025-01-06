@@ -20,13 +20,29 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.runmate2.Navigations.AppNav
 import com.example.runmate2.Navigations.LoginNav
-import com.example.runmate2.Navigations.Navigations
 import com.example.runmate2.Navigations.SplashNav
 import com.example.runmate2.ui.theme.RunMate2Theme
 import android.Manifest
+import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
+import com.example.runmate2.Backend.DistView
+import com.example.runmate2.Backend.distViewFact
 
 class MainActivity : ComponentActivity() {
+    private val distView: DistView by viewModels { distViewFact(application) }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted : Boolean ->
+        if(isGranted){
+            distView.startLocationUpdates()
+        }
+        else{
+            Log.d("DistView", "Permission not granted")
+        }
+
+    }
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +58,14 @@ override fun onCreate(savedInstanceState: Bundle?) {
                     }
                 }
             }
+        }
+        if(ActivityCompat.checkSelfPermission(this,
+            Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED){
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+        else{
+           Log.d("DistView", "Permission already granted")
+            distView.startLocationUpdates()
         }
     }
 }

@@ -2,6 +2,7 @@ package com.example.runmate2.App
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,6 +51,7 @@ import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -68,9 +70,10 @@ import com.example.runmate2.AuthViewModel
 import com.example.runmate2.Backend.backview
 import com.example.runmate2.R
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun During(navController: NavController, view : backview, time: String, steps : String, calories : String, authViewModel: AuthViewModel) {
+fun During(navController: NavController, view : backview, time: String, steps : String, calories : String, authViewModel: AuthViewModel, speed : String, distance : String) {
     var expanded by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
@@ -120,20 +123,30 @@ fun During(navController: NavController, view : backview, time: String, steps : 
 
                     ){
                         DropdownMenuItem(
-                            text = { Text("Hello",
-                                fontSize = 50.sp,
-                                color = Color.Black) },
+                            text = { Text("Hello , Senshi",
+                                fontSize = 20.sp,
+                                color = colorResource(R.color.warrior)) },
                             onClick = {  })
                         DropdownMenuItem(
-                            text = { Text("User",
-                                fontSize = 25.sp,
-                                color = Color.Gray)},
-                            onClick = {  }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Logout")},
-                            onClick = { authViewModel.SignOut()
-                            navController.navigate("Login")
+                            {
+                                Row (modifier = Modifier
+                                    .fillMaxWidth()){
+                                    Icon(painter = painterResource(R.drawable.baseline_logout_24),
+                                        contentDescription = null,)
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Text("Logout",
+                                        fontSize = 20.sp,
+                                        color = colorResource(R.color.redlight))
+                                }
+                            },
+                            onClick = {
+                                authViewModel.SignOut()
+                                navController.navigate("Login"){
+                                    popUpTo(navController.graph.startDestinationId){
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
+                                }
                             }
                         )
                     }
@@ -141,48 +154,63 @@ fun During(navController: NavController, view : backview, time: String, steps : 
             )
         },
         content = { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .background(color = Color.Black)
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Image(painter = painterResource(R.drawable.luffy),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize())
                 Column(
                     modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
+                        .background(color = Color(0x80000000))
+                        .fillMaxSize()
+                        .padding(innerPadding)
                 ) {
-                    Text(
-                        text = "WELL DONE!",
-                        fontSize = 32.sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        style = TextStyle(
-                            shadow = Shadow(
-                                color = colorResource(R.color.AppLime),
-                                offset = androidx.compose.ui.geometry.Offset(4f, 8f),
-                                blurRadius = 40f
-                            )
-                        ),
+                    Column(
                         modifier = Modifier
-                    )
-                    Spacer(modifier = Modifier.height(30.dp))
-                    Text("Summary:",
-                        fontSize = 20.sp,)
-                    Spacer(modifier = Modifier.height(25.dp))
-                    Row {
-                        Cards("Time", time)
-                        Spacer(modifier = Modifier.width(9.dp))
-                        Cards("Distance", "0 m")
-                        Spacer(modifier = Modifier.width(9.dp))
-                        Cards("Total Steps", steps)
-                    }
-                    Spacer(modifier = Modifier.height(9.dp))
-                    Row {
-                        Cards("Calories", "$calories CAL")
-                        Spacer(modifier = Modifier.width(9.dp))
-                        Cards("Top Speed", "0 m/s")
+                            .padding(10.dp)
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                    ) {
+                        Row {
+                            Text(
+                                text = "WELL DONE!",
+                                fontSize = 32.sp,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                style = TextStyle(
+                                    shadow = Shadow(
+                                        color = colorResource(R.color.AppLime),
+                                        offset = androidx.compose.ui.geometry.Offset(4f, 8f),
+                                        blurRadius = 40f
+                                    )
+                                ),
+                                modifier = Modifier
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(15.dp))
+
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Text(
+                            "Summary:",
+                            fontSize = 20.sp,
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Row(modifier = Modifier.padding(start = 9.dp)) {
+                            Cards("Time", time)
+                            Spacer(modifier = Modifier.width(9.dp))
+                            Cards("Distance", "$distance m")
+                            Spacer(modifier = Modifier.width(9.dp))
+                            Cards("Top Speed", "$speed m/s")
+
+                        }
+                        Spacer(modifier = Modifier.height(9.dp))
+                        Row(modifier = Modifier.padding(start = 59.dp)) {
+                            Cards("Calories", "$calories CAL")
+                            Spacer(modifier = Modifier.width(9.dp))
+                            Cards("Total Steps", steps)
+
+                        }
+                        Spacer(modifier = Modifier.height(15.dp))
+
                     }
                 }
             }
@@ -231,5 +259,5 @@ fun Cards(text : String, data : String){
 @Composable
 @Preview
 fun DuringPreview() {
-    During(navController = NavController(context = LocalContext.current), view = backview(), "", "", "", authViewModel = AuthViewModel())
+    During(navController = NavController(context = LocalContext.current), view = backview(), "", "", "", authViewModel = AuthViewModel(), "", "")
 }

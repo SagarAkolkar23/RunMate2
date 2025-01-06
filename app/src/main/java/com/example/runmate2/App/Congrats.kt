@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -48,10 +49,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -62,10 +65,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.runmate2.Backend.DistView
 import com.example.runmate2.Backend.StepsView
 import com.example.runmate2.Backend.backview
+import com.example.runmate2.Backend.distViewFact
 import com.example.runmate2.Backend.stepsViewFact
 import com.example.runmate2.R
 import kotlinx.coroutines.Job
@@ -76,13 +82,17 @@ import kotlin.text.format
 
 @SuppressLint("DefaultLocale")
 @Composable
-fun Congrats(navController: NavController, view : backview) {
+fun Congrats(navController: NavController, view : backview,application: Application = LocalContext.current.applicationContext as Application) {
 
     val formattedTime by remember { derivedStateOf { view.formatTime() } }
     val context = LocalContext.current
     val viewModel : StepsView = viewModel(factory = stepsViewFact(context.applicationContext as Application))
     val stepCount by viewModel.stepCount.collectAsState()
     var calories by remember { mutableFloatStateOf(0.0F) }
+    val distView: DistView = viewModel(factory = distViewFact(application))
+    val distance by distView.distance.observeAsState(0.0)
+    val speed by distView.speed.observeAsState(0f)
+
 
     LaunchedEffect(stepCount) {
         calories = (stepCount * 0.04).toFloat()
@@ -104,15 +114,19 @@ fun Congrats(navController: NavController, view : backview) {
                 .padding(top = 35.dp, start = 32.dp)
         ) {
             Spacer(modifier = Modifier.height(10.dp))
-            Text("Hello User",
-                modifier = Modifier ,
+            Text(
+                "Hello Senshi",
+                modifier = Modifier,
                 color = Color.White,
-                fontSize = 32.sp,)
+                fontSize = 32.sp,
+            )
             Spacer(modifier = Modifier.height(5.dp))
-            Text("Shinzou Sasageyo",
+            Text(
+                "Shinzou Sasageyo",
                 modifier = Modifier,
                 fontSize = 16.sp,
-                color = Color.White)
+                color = Color.White
+            )
         }
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -121,7 +135,12 @@ fun Congrats(navController: NavController, view : backview) {
 
 
         Card(
-            shape = RoundedCornerShape(topStart = 48.dp, topEnd = 48.dp, bottomStart = 0.dp, bottomEnd = 0.dp),
+            shape = RoundedCornerShape(
+                topStart = 48.dp,
+                topEnd = 48.dp,
+                bottomStart = 0.dp,
+                bottomEnd = 0.dp
+            ),
             colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = Color.Black),
             modifier = Modifier
                 .fillMaxWidth()
@@ -137,89 +156,117 @@ fun Congrats(navController: NavController, view : backview) {
                     shape = RoundedCornerShape(size = 48.dp)
                 ),
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                Spacer(modifier = Modifier.height(30.dp))
-                Row(horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()){
-                    Text("Tatakae!!",
-                        modifier = Modifier.padding(end = 140.dp))
-                    Button(onClick = { view.resetTimer()
-                        viewModel.resetSteps() },
-                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = colorResource(R.color.AppLime)),
-                        modifier = Modifier
-                            .width(132.dp)
-                            .height(32.dp)
-                            .padding(end = 30.dp)){
+
+            Box(modifier = Modifier.fillMaxSize()) {
+                Image(painter = painterResource(R.drawable.goku2),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .padding(top = 400.dp))
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    Spacer(modifier = Modifier.height(30.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         Text(
-                            "Restart",
-                            fontSize = 15.sp,
-                            color = Color.Black,
-                            textAlign = TextAlign.Center,
+                            "Tatakae!!",
+                            modifier = Modifier.padding(end = 140.dp)
                         )
+                        Button(
+                            onClick = {
+                                view.resetTimer()
+                                viewModel.resetSteps()
+                                distView.resetDistance()
+                            },
+                            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                                containerColor = colorResource(R.color.AppLime)
+                            ),
+                            modifier = Modifier
+                                .width(132.dp)
+                                .height(32.dp)
+                                .padding(end = 30.dp)
+                        ) {
+                            Text(
+                                "Restart",
+                                fontSize = 15.sp,
+                                color = Color.Black,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
                     }
-                }
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                    contentAlignment = Alignment.Center){
-                    Text(
-                        formattedTime,
-                        fontSize = 80.sp,
-                        color = colorResource(R.color.AppLime),
-                        style = TextStyle(
-                            shadow = Shadow(
-                                color = colorResource(R.color.AppLime),
-                                offset = androidx.compose.ui.geometry.Offset(4f, 8f),
-                                blurRadius = 40f
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            formattedTime,
+                            fontSize = 80.sp,
+                            color = colorResource(R.color.AppLime),
+                            style = TextStyle(
+                                shadow = Shadow(
+                                    color = colorResource(R.color.AppLime),
+                                    offset = androidx.compose.ui.geometry.Offset(4f, 8f),
+                                    blurRadius = 40f
+                                )
                             )
                         )
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(top = 5.dp, start = 20.dp, end = 20.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween)
-                {
-                    Cards2("Distance", " m")
-                    Spacer(modifier = Modifier.width(9.dp))
-                    Cards2("Speed", "\nm/s")
-                    Spacer(modifier = Modifier.width(9.dp))
-                    Cards2("Steps", "$stepCount")
-                }
-                Spacer(modifier = Modifier.height(9.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(top = 5.dp, start = 20.dp, end = 20.dp),
-                )
-                {
-                    Cards2("Calories", "$calories CAL")
-                    Spacer(modifier = Modifier.width(9.dp))
-                    Button(onClick = { view.stopTimer()
-                        navController.navigate("During/$formattedTime/$stepCount/$calories") },
-                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor  = Color(0xFFCCFF00)),
-                        modifier = Modifier
-                            .height(115.dp)){
-                        Text(
-                            "Stop",
-                            fontSize = 31.sp,
-                            color = Color.Black,
-                            textAlign = TextAlign.Center,
-                        )
                     }
-                }
-                Spacer(modifier = Modifier.height(30.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(top = 5.dp, start = 20.dp, end = 20.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    )
+                    {
+                        Cards2("Distance", "$distance m")
+                        Spacer(modifier = Modifier.width(9.dp))
+                        Cards2("Speed", "$speed m/s")
+                        Spacer(modifier = Modifier.width(9.dp))
+                        Cards2("Steps", "$stepCount")
+                    }
+                    Spacer(modifier = Modifier.height(9.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(top = 5.dp, start = 20.dp, end = 20.dp),
+                    )
+                    {
+                        Cards2("Calories", "$calories CAL")
+                        Spacer(modifier = Modifier.width(9.dp))
+                        Button(
+                            onClick = {
+                                view.stopTimer()
+                                navController.navigate("During/$formattedTime/$stepCount/$calories/$speed/$distance")
+                            },
+                            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFCCFF00)
+                            ),
+                            modifier = Modifier
+                                .height(115.dp)
+                        ) {
+                            Text(
+                                "Stop",
+                                fontSize = 31.sp,
+                                color = Color.Black,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(30.dp))
 
+
+                }
             }
         }
-
     }
 }
 

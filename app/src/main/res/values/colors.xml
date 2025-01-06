@@ -12,4 +12,6 @@
     <color name="DarkGreen">#0B0F05</color>
     <color name="DarkGray">#393838</color>
     <color name="DarkLime">#547225</color>
+    <color name="redlight">#F45042</color>
+    <color name="warrior">#F48536</color>
 </resources>

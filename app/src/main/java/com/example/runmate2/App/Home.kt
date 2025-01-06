@@ -7,12 +7,18 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.BottomAppBar
@@ -34,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -70,49 +77,72 @@ fun Home(navController: NavController, viewModel: AuthViewModel, view : backview
         }
     }
 
+    Box(modifier = Modifier,
+        contentAlignment = Alignment.Center) {
+        Image(painter = painterResource(R.drawable.nar),
+            contentDescription = null,
+            contentScale = ContentScale.Fit,
+            modifier = Modifier.fillMaxSize())
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally)
-    {
-        Text("RunMate",
-            fontSize = 36.sp,
-            color = Color.White)
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Ready, Set, Run!",
-            fontSize = 24.sp,
-            color = Color.White)
-        Spacer(modifier = Modifier.height(103.dp))
-        Button(onClick = {
-            navController.navigate("Congrats") },
+        Column(
             modifier = Modifier
-                .clip(CircleShape)
-                .size(250.dp)
-                .background(brush = GradientBrush(
-                    isHorizontalGradient = true,
-                    colors = listOf(colorResource(R.color.AppLime),
-                        colorResource(R.color.AppLime).copy(alpha = 0.7f),
-                        Color.White),
-                    angle = 175f
-                )),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-                ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize()
+                .background(Color(0x80000000)),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        )
+        {
+            Spacer(modifier = Modifier.height(550.dp))
+            Text(
+                "RunMate",
+                fontSize = 36.sp,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                "Ready, Set, Run!",
+                fontSize = 24.sp,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(
+                onClick = {
+                    navController.navigate("Congrats")
+                },
+                modifier = Modifier
+                    .clip(RoundedCornerShape(30))
+                    .width(300.dp)
+                    .height(90.dp)
+                    .background(
+                        brush = GradientBrush(
+                            isHorizontalGradient = true,
+                            colors = listOf(
+                                colorResource(R.color.AppLime),
+                                colorResource(R.color.AppLime).copy(alpha = 0.7f),
+                                Color.White
+                            ),
+                            angle = 175f
+                        )
+                    ),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
             ) {
-                Image(painter = painterResource(id = R.drawable.run_icon),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(100.dp))
-                Text("Start",
-                    fontSize = 48.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center) {
+                        Image(
+                            painter = painterResource(id = R.drawable.run_icon),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(60.dp)
+                        )
+                        Spacer(modifier = Modifier.width(20.dp))
+                        Text(
+                            "Start",
+                            fontSize = 48.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                        )
+                }
             }
         }
     }
