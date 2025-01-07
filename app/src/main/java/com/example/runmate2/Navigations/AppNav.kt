@@ -28,7 +28,7 @@ fun NavGraphBuilder.AppNav(navController: NavController){
             During(navController, view = backview(), time = time, steps = steps, calories = calories, authViewModel = AuthViewModel(),speed = speed, distance = distance)
         }
         composable("Congrats"){
-            Congrats(navController, backview())
+            Congrats(navController, backview(), authViewModel = AuthViewModel())
         }
     }
 }

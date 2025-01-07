@@ -1,11 +1,14 @@
 package com.example.runmate2.App
 
+import android.Manifest
 import android.app.Application
 import android.location.Location
 import android.util.Log
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +47,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,12 +59,22 @@ import com.example.runmate2.AuthViewModel
 import com.example.runmate2.R
 import com.example.runmate2.App.Congrats
 import com.example.runmate2.Backend.backview
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun Home(navController: NavController, viewModel: AuthViewModel, view : backview){
 
     val state by viewModel.state.observeAsState()
     val context = LocalContext.current
+    val permissionState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACTIVITY_RECOGNITION
+        )
+    )
 
 
     LaunchedEffect(state) {
@@ -78,12 +92,11 @@ fun Home(navController: NavController, viewModel: AuthViewModel, view : backview
     }
 
     Box(modifier = Modifier,
-        contentAlignment = Alignment.Center) {
+        contentAlignment = Alignment.TopEnd) {
         Image(painter = painterResource(R.drawable.nar),
             contentDescription = null,
             contentScale = ContentScale.Fit,
             modifier = Modifier.fillMaxSize())
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -92,6 +105,19 @@ fun Home(navController: NavController, viewModel: AuthViewModel, view : backview
             horizontalAlignment = Alignment.CenterHorizontally
         )
         {
+            permissionState.permissions.forEach { perm ->
+                when(perm.permission){
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACTIVITY_RECOGNITION -> {
+                        when {
+                            perm.hasPermission -> {}
+                            perm.shouldShowRationale -> {}
+                            !perm.hasPermission && !perm.shouldShowRationale -> {}
+                        }
+                    }
+                }
+
+            }
             Spacer(modifier = Modifier.height(550.dp))
             Text(
                 "RunMate",
@@ -105,27 +131,35 @@ fun Home(navController: NavController, viewModel: AuthViewModel, view : backview
                 color = Color.White
             )
             Spacer(modifier = Modifier.height(20.dp))
-            Button(
-                onClick = {
-                    navController.navigate("Congrats")
-                },
-                modifier = Modifier
-                    .clip(RoundedCornerShape(30))
-                    .width(300.dp)
-                    .height(90.dp)
-                    .background(
-                        brush = GradientBrush(
-                            isHorizontalGradient = true,
-                            colors = listOf(
-                                colorResource(R.color.AppLime),
-                                colorResource(R.color.AppLime).copy(alpha = 0.7f),
-                                Color.White
-                            ),
-                            angle = 175f
-                        )
-                    ),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-            ) {
+
+                Button(
+                    onClick = {
+                        permissionState.launchMultiplePermissionRequest()
+                        if (permissionState.allPermissionsGranted) {
+                            navController.navigate("Congrats")
+                        }
+                        else{
+                            Toast.makeText(context, "Location Permission Denied", Toast.LENGTH_SHORT).show()
+                            permissionState.launchMultiplePermissionRequest()
+                        }
+                    },
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(50))
+                        .width(300.dp)
+                        .height(90.dp)
+                        .background(
+                            brush = GradientBrush(
+                                isHorizontalGradient = true,
+                                colors = listOf(
+                                    colorResource(R.color.AppLime),
+                                    colorResource(R.color.AppLime).copy(alpha = 0.7f),
+                                    Color.White
+                                ),
+                                angle = 175f
+                            )
+                        ),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center) {
@@ -142,8 +176,8 @@ fun Home(navController: NavController, viewModel: AuthViewModel, view : backview
                             fontWeight = FontWeight.Bold,
                             color = Color.Black,
                         )
+                    }
                 }
-            }
         }
     }
 }

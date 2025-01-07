@@ -80,4 +80,7 @@ dependencies {
     implementation (libs.androidx.activity.ktx)
     implementation (libs.androidx.fragment.ktx)
 
+    //Permissions UI
+    implementation (libs.accompanist.permissions)
+
 }

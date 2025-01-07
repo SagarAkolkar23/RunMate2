@@ -40,10 +40,12 @@ class DistView(application: Application) : AndroidViewModel(application) {
                     Log.d("DistView", "Location received: $location")
                     if(lastLoc != null){
                      val distance = lastLoc!!.distanceTo(location).toInt()
-                        totalDist += distance
-                        val speed = location.speed.toInt()
-                        Log.d("DistView", "Distance: $distance, Speed: $speed")
-                        updateValues(totalDist, speed)
+                        if(distance < 20) {
+                            totalDist += distance
+                            val speed = location.speed.toInt()
+                            Log.d("DistView", "Distance: $distance, Speed: $speed")
+                            updateValues(totalDist, speed)
+                        }
                     }
                     lastLoc = location
                 }

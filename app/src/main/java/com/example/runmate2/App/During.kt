@@ -89,7 +89,7 @@ fun During(navController: NavController, view : backview, time: String, steps : 
                             inclusive = true
                         }
                         launchSingleTop = true
-                    }},
+                    } },
                         modifier = Modifier.size(55.dp)) {
                         Icon(imageVector = Icons.Default.Home,
                             contentDescription = null,
@@ -210,7 +210,6 @@ fun During(navController: NavController, view : backview, time: String, steps : 
 
                         }
                         Spacer(modifier = Modifier.height(15.dp))
-
                     }
                 }
             }

@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -68,21 +69,28 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.runmate2.AuthViewModel
 import com.example.runmate2.Backend.DistView
 import com.example.runmate2.Backend.StepsView
 import com.example.runmate2.Backend.backview
 import com.example.runmate2.Backend.distViewFact
 import com.example.runmate2.Backend.stepsViewFact
 import com.example.runmate2.R
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.Job
+import android.Manifest
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.text.format
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @SuppressLint("DefaultLocale")
+
 @Composable
-fun Congrats(navController: NavController, view : backview,application: Application = LocalContext.current.applicationContext as Application) {
+fun Congrats(navController: NavController, view : backview,application: Application = LocalContext.current.applicationContext as Application, authViewModel: AuthViewModel) {
 
     val formattedTime by remember { derivedStateOf { view.formatTime() } }
     val context = LocalContext.current
@@ -92,6 +100,7 @@ fun Congrats(navController: NavController, view : backview,application: Applicat
     val distView: DistView = viewModel(factory = distViewFact(application))
     val distance by distView.distance.observeAsState(0.0)
     val speed by distView.speed.observeAsState(0f)
+
 
 
     LaunchedEffect(stepCount) {
@@ -107,6 +116,9 @@ fun Congrats(navController: NavController, view : backview,application: Applicat
             .background(color = Color(0xFF01111D))
             .fillMaxSize()
     ) {
+
+
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -308,6 +320,6 @@ fun Cards2(text : String, data : String){
 @Composable
 @Preview
 fun CongratsPreview() {
-    Congrats(navController = NavController(context = LocalContext.current), view = backview())
+    Congrats(navController = NavController(context = LocalContext.current), view = backview(), authViewModel = AuthViewModel())
 }
 
