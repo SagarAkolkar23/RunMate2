@@ -53,6 +53,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.firebase.auth)
     implementation(libs.androidx.media3.common.ktx)
+    implementation(libs.googleid)
+    implementation(libs.firebase.firestore.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,7 +73,6 @@ dependencies {
 
     // Jetpack Compose integration (if you're using Compose)
     implementation(libs.androidx.navigation.compose.v253)
-
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.lifecycle.runtime.compose)
 
@@ -82,5 +83,12 @@ dependencies {
 
     //Permissions UI
     implementation (libs.accompanist.permissions)
+
+    //Authentication libraries
+        implementation (platform(libs.firebase.bom))
+        implementation (libs.google.firebase.auth)
+        implementation (libs.play.services.auth)
+
+
 
 }

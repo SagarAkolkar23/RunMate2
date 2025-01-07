@@ -12,7 +12,12 @@
           "package_name": "com.example.runmate2"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "769301761294-pqlf0hq9rq33r77i9l0evbuq99kdeiaq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAdjL-ELntA4C-_RYqZcoXsMsCg507Yb14"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "769301761294-pqlf0hq9rq33r77i9l0evbuq99kdeiaq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

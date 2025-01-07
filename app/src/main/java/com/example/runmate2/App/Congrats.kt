@@ -79,6 +79,8 @@ import com.example.runmate2.R
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.Job
 import android.Manifest
+import android.view.View
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import kotlinx.coroutines.delay
@@ -91,6 +93,7 @@ import kotlin.text.format
 
 @Composable
 fun Congrats(navController: NavController, view : backview,application: Application = LocalContext.current.applicationContext as Application, authViewModel: AuthViewModel) {
+
 
     val formattedTime by remember { derivedStateOf { view.formatTime() } }
     val context = LocalContext.current
@@ -158,9 +161,9 @@ fun Congrats(navController: NavController, view : backview,application: Applicat
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .shadow(
-                    elevation = 80.dp,
-                    spotColor = Color.White,
-                    ambientColor = Color.White,
+                    elevation = 3.dp,
+                    spotColor = colorResource(R.color.shadow),
+                    ambientColor = colorResource(R.color.shadow),
                     shape = RoundedCornerShape(48.dp)
                 )
                 .background(
@@ -187,6 +190,7 @@ fun Congrats(navController: NavController, view : backview,application: Applicat
                     ) {
                         Text(
                             "Tatakae!!",
+                            color = Color.White,
                             modifier = Modifier.padding(end = 140.dp)
                         )
                         Button(
@@ -316,10 +320,11 @@ fun Cards2(text : String, data : String){
 
 
 
-
 @Composable
 @Preview
 fun CongratsPreview() {
-    Congrats(navController = NavController(context = LocalContext.current), view = backview(), authViewModel = AuthViewModel())
+    val navController = rememberNavController()
+    val authViewModel = remember { AuthViewModel() }
+    val backview = remember { backview() }
+    Congrats(navController = navController, backview, authViewModel = authViewModel)
 }
-

@@ -31,6 +31,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +49,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -117,7 +119,7 @@ fun SignUp(navController: NavController, viewModel: AuthViewModel){
             modifier = Modifier
                 .align(alignment = Alignment.CenterHorizontally)
                 .width(330.dp)
-                .height(520.dp)
+                .height(420.dp)
         ) {
             Spacer(Modifier.padding(15.dp))
             TextField(
@@ -193,6 +195,7 @@ fun SignUp(navController: NavController, viewModel: AuthViewModel){
 
             Spacer(Modifier.padding(8.dp))
             TextField(value = Password,
+                visualTransformation = PasswordVisualTransformation(),
                 onValueChange = {newText -> Password = newText.trim()},
                 label = { Text("Password",
                     fontSize = 15.sp,
@@ -223,6 +226,7 @@ fun SignUp(navController: NavController, viewModel: AuthViewModel){
 
             Spacer(Modifier.padding(8.dp))
             TextField(value = ConfPassword,
+                visualTransformation = PasswordVisualTransformation(),
                 onValueChange = {newText -> ConfPassword = newText.trim( )},
                 label = { Text("Confirm Password",
                     fontSize = 15.sp,
@@ -270,31 +274,6 @@ fun SignUp(navController: NavController, viewModel: AuthViewModel){
                     fontSize = 24.sp,
                     modifier = Modifier,
                     color = Color.Black)
-            }
-            Spacer(Modifier.padding(6.dp))
-            Text("Or",
-                fontSize = 20.sp,
-                modifier = Modifier
-                    .align(alignment = Alignment.CenterHorizontally))
-            Spacer(Modifier.padding(6.dp))
-            Button(onClick = { },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                modifier = Modifier
-                    .align(alignment = Alignment.CenterHorizontally)
-                    .width(297.dp)
-                    .height(57.dp)) {
-                Row {
-                    Icon(painter = painterResource(R.drawable.googlelogo),
-                        contentDescription = "Google Logo",
-                        modifier = Modifier
-                            .size(35.dp))
-                    Text(
-                        "Continue with google",
-                        fontSize = 17.sp,
-                        modifier = Modifier
-                            .align(alignment = Alignment.CenterVertically),
-                        color = Color.Black)
-                }
             }
             Spacer(Modifier.padding(5.dp))
         }

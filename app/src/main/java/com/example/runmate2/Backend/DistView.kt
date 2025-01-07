@@ -1,5 +1,6 @@
 package com.example.runmate2.Backend
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.pm.PackageManager
 import android.location.Location
@@ -35,6 +36,7 @@ class DistView(application: Application) : AndroidViewModel(application) {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
         val locationCallback = object : LocationCallback() {
+            @SuppressLint("SuspiciousIndentation")
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult.locations.forEach { location ->
                     Log.d("DistView", "Location received: $location")

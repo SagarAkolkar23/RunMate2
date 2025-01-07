@@ -41,7 +41,6 @@ class backview : ViewModel() {
         timerJob = null
     }
     fun resetTimer() {
-        stopTimer()
         seconds = 0
     }
     @SuppressLint("DefaultLocale")

@@ -3,6 +3,7 @@ package com.example.runmate2.Logins
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -46,27 +47,31 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.registerForAllProfilingResults
 import androidx.navigation.NavController
 import com.example.runmate2.AuthState
 import com.example.runmate2.AuthViewModel
 import com.example.runmate2.R
+import com.example.runmate2.googleViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Login(navController: NavController, viewModel: AuthViewModel) {
+fun Login(navController: NavController, viewModel: AuthViewModel, googleViewModel: googleViewModel) {
     var Email by remember { mutableStateOf("") }
     var Password by remember { mutableStateOf("") }
     val context = LocalContext.current
     val state by viewModel.state.observeAsState()
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
-
+    var reset by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -97,7 +102,7 @@ fun Login(navController: NavController, viewModel: AuthViewModel) {
                 modifier = Modifier
                     .align(alignment = Alignment.CenterHorizontally)
                     .width(330.dp)
-                    .height(480.dp)
+                    .height(350.dp)
             ) {
                 Spacer(Modifier.padding(25.dp))
                 TextField(
@@ -136,6 +141,7 @@ fun Login(navController: NavController, viewModel: AuthViewModel) {
                 Spacer(Modifier.padding(15.dp))
                 TextField(
                     value = Password,
+                    visualTransformation = PasswordVisualTransformation(),
                     onValueChange = { newText -> Password = newText.trim() },
                     label = {
                         Text(
@@ -179,7 +185,10 @@ fun Login(navController: NavController, viewModel: AuthViewModel) {
                     "Forget Password ?",
                     modifier = Modifier
                         .align(alignment = Alignment.End)
-                        .padding(end = 25.dp),
+                        .padding(end = 25.dp)
+                        .clickable {
+                            navController.navigate("resetPassword")
+                        },
                     fontSize = 15.sp,
                     color = colorResource(R.color.DarkGreen)
                 )
@@ -201,39 +210,6 @@ fun Login(navController: NavController, viewModel: AuthViewModel) {
                         color = Color.Black
                     )
                 }
-                Spacer(Modifier.padding(6.dp))
-                Text(
-                    "Or",
-                    fontSize = 20.sp,
-                    modifier = Modifier
-                        .align(alignment = Alignment.CenterHorizontally)
-                )
-                Spacer(Modifier.padding(6.dp))
-                Button(
-                    onClick = { },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                    modifier = Modifier
-                        .align(alignment = Alignment.CenterHorizontally)
-                        .width(297.dp)
-                        .height(57.dp)
-                ) {
-                    Row {
-                        Icon(
-                            painter = painterResource(R.drawable.googlelogo),
-                            contentDescription = "Google Logo",
-                            modifier = Modifier
-                                .size(35.dp)
-                        )
-                        Text(
-                            "Continue with google",
-                            fontSize = 17.sp,
-                            modifier = Modifier
-                                .padding(top = 5.dp),
-                            color = Color.Black
-                        )
-                    }
-                }
-                Spacer(Modifier.padding(25.dp))
             }
 
             Spacer(Modifier.padding(15.dp))
@@ -257,6 +233,7 @@ fun Login(navController: NavController, viewModel: AuthViewModel) {
                     }
             )
         }
+
     }
     LaunchedEffect(state) {
         Log.d("Authstate", "$state")
@@ -276,9 +253,6 @@ fun Login(navController: NavController, viewModel: AuthViewModel) {
         }
     }
 }
-
-
-
 @Composable
 fun Gradientbrush(isHorizontalGradient: Boolean, colors: List<androidx.compose.ui.graphics.Color>, angle: Float): Brush {
     return Brush.linearGradient(
@@ -286,11 +260,4 @@ fun Gradientbrush(isHorizontalGradient: Boolean, colors: List<androidx.compose.u
         start = Offset(0f, Float.POSITIVE_INFINITY),
         end = Offset(Float.POSITIVE_INFINITY, 0f)
     )
-
-}
-
-@Preview
-@Composable
-fun LoginPreview() {
-    Login(navController = NavController(LocalContext.current), viewModel = AuthViewModel())
 }

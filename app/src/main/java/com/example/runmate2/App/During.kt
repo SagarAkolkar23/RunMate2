@@ -192,6 +192,7 @@ fun During(navController: NavController, view : backview, time: String, steps : 
                         Text(
                             "Summary:",
                             fontSize = 20.sp,
+                            color = Color.White
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         Row(modifier = Modifier.padding(start = 9.dp)) {
@@ -224,10 +225,12 @@ fun Cards(text : String, data : String){
         shape = RoundedCornerShape(size = 15.dp),
         colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
         modifier = Modifier
-        .width(100.dp)
-        .height(115.dp)
-        .background(color = Color(0xFF1E1E1E),
-            shape = RoundedCornerShape(size = 15.dp))
+            .width(100.dp)
+            .height(115.dp)
+            .background(
+                color = Color(0xFF1E1E1E),
+                shape = RoundedCornerShape(size = 15.dp)
+            )
     )
     {
         Column (

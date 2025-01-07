@@ -1,26 +1,25 @@
 package com.example.runmate2
 
+import android.widget.Toast
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 
 class AuthViewModel : ViewModel() {
     private val auth : FirebaseAuth = FirebaseAuth.getInstance()
-    private val _state : MutableStateFlow<AuthState> =MutableStateFlow(AuthState.Unauthenticated)
-    val state : MutableLiveData<AuthState> = MutableLiveData()
+    private val _state = MutableLiveData<AuthState>()
+    val state : LiveData<AuthState> = _state
 
     init{
-        observeAuthState()
         checkAuthStatus()
+        observeAuthState()
     }
     private fun observeAuthState() {
-        viewModelScope.launch {
-            _state.collect { authState ->
-                state.postValue(authState)
-            }
+        _state.value = if (auth.currentUser == null) {
+            AuthState.Unauthenticated
+        } else {
+            AuthState.Authenticated
         }
     }
 
@@ -44,7 +43,7 @@ class AuthViewModel : ViewModel() {
                 task ->
                 if(task.isSuccessful){
                     _state.value = AuthState.Authenticated
-                    _state.value = AuthState.Message("Logged in successfully")
+                    _state.value = AuthState.Message("Account created successfully")
                 }
                 else{
                     _state.value = AuthState.Error(task.exception?.message ?: "Unknown error")
@@ -71,6 +70,21 @@ class AuthViewModel : ViewModel() {
         auth.signOut()
         _state.value = AuthState.Unauthenticated
     }
+
+    fun resetPassword(Email: String){
+        _state.value = AuthState.Loading
+        auth.sendPasswordResetEmail(Email)
+            .addOnCompleteListener {
+                task ->
+                if(task.isSuccessful){
+                    _state.value = AuthState.Message("Password reset email sent")
+                }
+                else{
+                     _state.value = AuthState.Error(task.exception?.message ?: "Unknown error")
+                }
+            }
+    }
+
 }
 
 
